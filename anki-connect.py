@@ -21,5 +21,51 @@ class AnkiConnect:
             raise Exception(response['error'])
         return response['result']
 
-result = AnkiConnect.invoke('deckNames')
+class AddNoteAction:
+    @staticmethod
+    def format_params(front, back, audio_url, audio_filename):
+        """
+        Formats the parameters for the 'addNote' action.
+        """
+        return {
+            "note": {
+                "deckName": "Experiment",
+                "modelName": "Basic",
+                "fields": {
+                    "Front": front,
+                    "Back": back
+                },
+                "options": {
+                    "allowDuplicate": False,
+                    "duplicateScope": "deck",
+                    "duplicateScopeOptions": {
+                        "deckName": "Experiment",
+                        "checkChildren": False,
+                        "checkAllModels": False
+                    }
+                },
+                "audio": [{
+                    "url": audio_url,
+                    "filename": audio_filename,
+                    "skipHash": "",
+                    "fields": ["Front"]
+                }],
+            }
+        }
+
+# --- Example Usage ---
+front = "猫"
+back = "ねこ (Cat)"
+url = "https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?kanji=猫&kana=ねこ"
+filename = "yomichan_ねこ_猫.mp3"
+note_params = AddNoteAction.format_params(front, back, url, filename)
+try:
+    result = AnkiConnect.invoke('addNote', **note_params)
+    print(f"Successfully added note with ID: {result}")
+except Exception as e:
+    print(f"Error: {e}")
+
+'''
+result = AnkiConnect.invoke('modelNames')
 print('got list of decks: {}'.format(result))
+'''
