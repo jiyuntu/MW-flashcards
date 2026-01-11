@@ -53,19 +53,14 @@ class AddNoteAction:
             }
         }
 
-# --- Example Usage ---
-front = "猫"
-back = "ねこ (Cat)"
-url = "https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?kanji=猫&kana=ねこ"
-filename = "yomichan_ねこ_猫.mp3"
-note_params = AddNoteAction.format_params(front, back, url, filename)
-try:
-    result = AnkiConnect.invoke('addNote', **note_params)
-    print(f"Successfully added note with ID: {result}")
-except Exception as e:
-    print(f"Error: {e}")
-
-'''
-result = AnkiConnect.invoke('modelNames')
-print('got list of decks: {}'.format(result))
-'''
+if __name__ == "__main__":
+    front = "猫"
+    back = "ねこ (Cat)"
+    url = "https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?kanji=猫&kana=ねこ"
+    filename = "yomichan_ねこ_猫.mp3"
+    note_params = AddNoteAction.format_params(front, back, url, filename)
+    try:
+        result = AnkiConnect.invoke('addNote', **note_params)
+        print(f"Successfully added note with ID: {result}")
+    except Exception as e:
+        print(f"Error: {e}")
