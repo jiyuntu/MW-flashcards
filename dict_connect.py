@@ -37,8 +37,8 @@ class Headword:
     def __init__(self, data):
         self.__word = data.get('hwi', {}).get('hw')
         self.__pos = data.get('fl')
-        audio = data.get('hwi', {}).get('prs', [{}])[0].get('sound', {}).get('audio')
-        self.__audio_url = MerriamWebsterDict.get_audio_url(audio) if audio else None
+        self.__audio = data.get('hwi', {}).get('prs', [{}])[0].get('sound', {}).get('audio')
+        self.__audio_url = MerriamWebsterDict.get_audio_url(self.__audio) if self.__audio else None
         self.__shortdefs = data.get('shortdef')
         self.__example = None
 
@@ -66,6 +66,21 @@ class Headword:
     @property
     def word(self):
         return self.__word
+    @property
+    def shortdefs(self):
+        return self.__shortdefs
+    @property
+    def pos(self):
+        return self.__pos
+    @property
+    def example(self):
+        return self.__example
+    @property
+    def audio(self):
+        return self.__audio
+    @property
+    def audio_url(self):
+        return self.__audio_url
     @staticmethod
     def __remove_tokens(text):
         return re.sub(r'\{[^}]*\}', '', text)
@@ -85,6 +100,9 @@ class Entry:
             headword = Headword(entry)
             if headword.word and headword.word.lower() == target.lower():
                 self.__headwords.append(headword)
+    @property
+    def headwords(self):
+        return self.__headwords
 
     def log(self):
         for headword in self.__headwords:

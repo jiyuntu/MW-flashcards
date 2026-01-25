@@ -27,7 +27,7 @@ class AddNoteAction:
         """
         Formats the parameters for the 'addNote' action.
         """
-        return {
+        ret = {
             "note": {
                 "deckName": "Experiment",
                 "modelName": "Basic",
@@ -44,14 +44,16 @@ class AddNoteAction:
                         "checkAllModels": False
                     }
                 },
-                "audio": [{
-                    "url": audio_url,
-                    "filename": audio_filename,
-                    "skipHash": "",
-                    "fields": ["Front"]
-                }],
             }
         }
+        if audio_url and audio_filename:
+            ret["note"]["audio"] = [{
+                "url": audio_url,
+                "filename": audio_filename,
+                "skipHash": "",
+                "fields": ["Front"]
+            }]
+        return ret
 
 if __name__ == "__main__":
     front = "猫"
