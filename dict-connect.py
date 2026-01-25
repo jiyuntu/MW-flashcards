@@ -83,9 +83,8 @@ class Entry:
         self.__headwords = []
         for entry in data:
             headword = Headword(entry)
-            if headword.word != target:
-                continue
-            self.__headwords.append(headword)
+            if headword.word and headword.word.lower() == target.lower():
+                self.__headwords.append(headword)
 
     def log(self):
         for headword in self.__headwords:
