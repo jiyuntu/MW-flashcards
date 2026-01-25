@@ -80,16 +80,22 @@ class Headword:
 
 class Entry:
     def __init__(self, data, target):
+        self.__headwords = []
         for entry in data:
             headword = Headword(entry)
             if headword.word != target:
                 continue
+            self.__headwords.append(headword)
+
+    def log(self):
+        for headword in self.__headwords:
             headword.log()
 
 if __name__ == "__main__":
     target = "bike"
     result = MerriamWebsterConnect.fetch_entry(target)
     entry = Entry(result, target)
+    entry.log()
 """
     if result:
         print(json.dumps(result, indent=2))
