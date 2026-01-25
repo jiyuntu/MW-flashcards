@@ -25,8 +25,8 @@ class Headword:
         self.__word = data.get('hwi', {}).get('hw')
         self.__pos = data.get('fl')
         self.__audio = data.get('hwi', {}).get('prs', [{}])[0].get('sound', {}).get('audio')
-        self.__shortdefs = data.get('shortdef', [])
-        self.__examples = []
+        self.__shortdefs = data.get('shortdef')
+        self.__example = None
 
         for definition_block in data.get('def', []):
             for sseq in definition_block.get('sseq', []):
@@ -36,10 +36,19 @@ class Headword:
                         if isinstance(content, dict) and 'dt' in content:
                             for defining_text in content['dt']:
                                 if defining_text[0] == 'vis':
-                                    for example_obj in defining_text[1]:
-                                        if 't' in example_obj:
-                                            clean_ex = self.__remove_tokens(example_obj['t'])
-                                            self.__examples.append(clean_ex)
+                                    for dt_element in defining_text[1]:
+                                        if 't' in dt_element:
+                                            example = self.__remove_tokens(dt_element['t'])
+                                            self.__example = example
+                                            break
+                                if self.__example:
+                                    break
+                    if self.__example:
+                        break
+                if self.__example:
+                    break
+            if self.__example:
+                break
     @property
     def word(self):
         return self.__word
@@ -52,9 +61,8 @@ class Headword:
         print(f"POS:     {self.__pos}")
         print(f"Audio:   {self.__audio}")
         print(f"Defs:    {self.__shortdefs}")
-        print(f"Examples:{self.__examples}")
+        print(f"Example: {self.__example}")
         print("-" * 50)
-
 
 class Entry:
     def __init__(self, data, target):
