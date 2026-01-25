@@ -29,7 +29,7 @@ class AddNoteAction:
         """
         ret = {
             "note": {
-                "deckName": "Experiment",
+                "deckName": "Merriam Webster",
                 "modelName": "Basic",
                 "fields": {
                     "Front": front,
@@ -39,7 +39,7 @@ class AddNoteAction:
                     "allowDuplicate": False,
                     "duplicateScope": "deck",
                     "duplicateScopeOptions": {
-                        "deckName": "Experiment",
+                        "deckName": "Merriam Webster",
                         "checkChildren": False,
                         "checkAllModels": False
                     }
