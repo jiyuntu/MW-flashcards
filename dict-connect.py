@@ -1,6 +1,7 @@
+import json
 import re
 import requests
-import json
+import string
 
 API_KEY = "fe536dd4-bcec-4baf-bcd6-0653d25c65e7"
 
@@ -20,11 +21,24 @@ class MerriamWebsterConnect:
             print(f"An error occurred: {e}")
             return None
 
+class MerriamWebsterDict:
+    @staticmethod
+    def get_audio_url(audio):
+        prefix_match = re.search(r'^([0-9]+|gg|bix)', audio)
+        if prefix_match:
+            prefix = prefix_match.group(1)
+            if prefix[0].isdigit() or prefix[0] in string.punctuation:
+                prefix = 'number'
+        else:
+            prefix = audio[0]
+        return f"https://media.merriam-webster.com/audio/prons/en/us/mp3/{prefix}/{audio}.mp3"
+
 class Headword:
     def __init__(self, data):
         self.__word = data.get('hwi', {}).get('hw')
         self.__pos = data.get('fl')
-        self.__audio = data.get('hwi', {}).get('prs', [{}])[0].get('sound', {}).get('audio')
+        audio = data.get('hwi', {}).get('prs', [{}])[0].get('sound', {}).get('audio')
+        self.__audio_url = MerriamWebsterDict.get_audio_url(audio) if audio else None
         self.__shortdefs = data.get('shortdef')
         self.__example = None
 
@@ -57,11 +71,11 @@ class Headword:
         return re.sub(r'\{[^}]*\}', '', text)
     def log(self):
         print("-" * 50)
-        print(f"WORD:    {self.__word}")
-        print(f"POS:     {self.__pos}")
-        print(f"Audio:   {self.__audio}")
-        print(f"Defs:    {self.__shortdefs}")
-        print(f"Example: {self.__example}")
+        print(f"WORD:      {self.__word}")
+        print(f"POS:       {self.__pos}")
+        print(f"Audio URL: {self.__audio_url}")
+        print(f"Defs:      {self.__shortdefs}")
+        print(f"Example:   {self.__example}")
         print("-" * 50)
 
 class Entry:
