@@ -1,3 +1,4 @@
+import re
 import requests
 import json
 
@@ -19,7 +20,55 @@ class MerriamWebsterConnect:
             print(f"An error occurred: {e}")
             return None
 
+class Headword:
+    def __init__(self, data):
+        self.__word = data.get('hwi', {}).get('hw')
+        self.__pos = data.get('fl')
+        self.__audio = data.get('hwi', {}).get('prs', [{}])[0].get('sound', {}).get('audio')
+        self.__shortdefs = data.get('shortdef', [])
+        self.__examples = []
+
+        for definition_block in data.get('def', []):
+            for sseq in definition_block.get('sseq', []):
+                for sense in sseq:
+                    if isinstance(sense, list) and len(sense) > 1:
+                        content = sense[1]
+                        if isinstance(content, dict) and 'dt' in content:
+                            for defining_text in content['dt']:
+                                if defining_text[0] == 'vis':
+                                    for example_obj in defining_text[1]:
+                                        if 't' in example_obj:
+                                            clean_ex = self.__remove_tokens(example_obj['t'])
+                                            self.__examples.append(clean_ex)
+    @property
+    def word(self):
+        return self.__word
+    @staticmethod
+    def __remove_tokens(text):
+        return re.sub(r'\{[^}]*\}', '', text)
+    def log(self):
+        print("-" * 50)
+        print(f"WORD:    {self.__word}")
+        print(f"POS:     {self.__pos}")
+        print(f"Audio:   {self.__audio}")
+        print(f"Defs:    {self.__shortdefs}")
+        print(f"Examples:{self.__examples}")
+        print("-" * 50)
+
+
+class Entry:
+    def __init__(self, data, target):
+        for entry in data:
+            headword = Headword(entry)
+            if headword.word != target:
+                continue
+            headword.log()
+
 if __name__ == "__main__":
-    result = MerriamWebsterConnect.fetch_entry("python")
+    target = "bike"
+    result = MerriamWebsterConnect.fetch_entry(target)
+    entry = Entry(result, target)
+"""
     if result:
         print(json.dumps(result, indent=2))
+"""
