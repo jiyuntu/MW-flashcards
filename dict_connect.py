@@ -98,12 +98,11 @@ class Headword:
         print("-" * 50)
 
 class Entry:
-    def __init__(self, data, target):
+    def __init__(self, data):
         self.__headwords = []
         for entry in data:
             headword = Headword(entry)
-            if headword.word and headword.word.lower() == target.lower():
-                self.__headwords.append(headword)
+            self.__headwords.append(headword)
     @property
     def headwords(self):
         return self.__headwords
@@ -112,10 +111,19 @@ class Entry:
         for headword in self.__headwords:
             headword.log()
 
+    def count(self, target):
+        return len([headword for headword in self.__headwords \
+                    if headword.word and headword.word == target])
+
+    def filter(self, target):
+        self.__headwords = [headword for headword in self.__headwords \
+                            if headword.word and headword.word == target]
+
 if __name__ == "__main__":
     target = "bike"
     result = MerriamWebsterConnect.fetch_entry(target)
-    entry = Entry(result, target)
+    entry = Entry(result)
+    entry.filter(target)
     entry.log()
 """
     if result:

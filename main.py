@@ -29,33 +29,44 @@ class MWAnkiCard:
     def audio_url(self):
         return self.__audio_url
 
+def add(target):
+    data = MerriamWebsterConnect.fetch_entry(target)
+    if not data:
+        print(f"No results found for '{target}'.")
+        return
+
+    entry = Entry(data)
+    if entry.count(target) > 0:
+        entry.filter(target)
+        entry.log()
+        card = MWAnkiCard(entry)
+        try:
+            params = AddNoteAction.format_params(
+                front=card.front,
+                back=card.back,
+                audio_url=card.audio_url,
+                audio_filename=f"{card.audio}.mp3"
+            )
+            note_id = AnkiConnect.invoke('addNote', **params)
+            print(f"✅ Added to Anki (ID: {note_id})")
+        except Exception as e:
+            print(f"❌ Anki Error: {e}")
+    else:
+        print(f"No entry found for {target}.")
+        for headword in entry.headwords:
+            response = input(f"Would you like to add {headword.word} instead? (yes/no): ")
+            response = response.strip().lower()
+            if response == "yes":
+                add(headword.word)
+                return
+
 def main():
     try:
         while True:
             target = input("Enter word to look up: ").strip()
             if not target:
                 continue
-
-            data = MerriamWebsterConnect.fetch_entry(target)
-            if not data:
-                print(f"No results found for '{target}'.")
-                continue
-
-            entry = Entry(data, target)
-            if len(entry.headwords) > 0:
-                entry.log()
-                card = MWAnkiCard(entry)
-                try:
-                    params = AddNoteAction.format_params(
-                        front=card.front,
-                        back=card.back,
-                        audio_url=card.audio_url,
-                        audio_filename=f"{card.audio}.mp3"
-                    )
-                    note_id = AnkiConnect.invoke('addNote', **params)
-                    print(f"✅ Added to Anki (ID: {note_id})")
-                except Exception as e:
-                    print(f"❌ Anki Error: {e}")
+            add(target)
     except KeyboardInterrupt:
         sys.exit(0)
 
