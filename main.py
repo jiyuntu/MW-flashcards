@@ -43,6 +43,7 @@ def main():
 
             entry = Entry(data, target)
             if len(entry.headwords) > 0:
+                entry.log()
                 card = MWAnkiCard(entry)
                 try:
                     params = AddNoteAction.format_params(
