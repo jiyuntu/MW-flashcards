@@ -35,7 +35,7 @@ class MerriamWebsterDict:
 
 class Headword:
     def __init__(self, data):
-        self.__word = data.get('hwi', {}).get('hw')
+        self.__word = self.__remove_non_alphabet(data.get('hwi', {}).get('hw'))
         self.__pos = data.get('fl')
         self.__audio = data.get('hwi', {}).get('prs', [{}])[0].get('sound', {}).get('audio')
         self.__audio_url = MerriamWebsterDict.get_audio_url(self.__audio) if self.__audio else None
@@ -84,6 +84,10 @@ class Headword:
     @staticmethod
     def __remove_tokens(text):
         return re.sub(r'\{[^}]*\}', '', text)
+    @staticmethod
+    def __remove_non_alphabet(word):
+        regex = re.compile('[^a-zA-Z]')
+        return regex.sub('', word)
     def log(self):
         print("-" * 50)
         print(f"WORD:      {self.__word}")
