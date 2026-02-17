@@ -1,5 +1,5 @@
 import sys
-import json
+import vlc
 from dict_connect import MerriamWebsterConnect, Entry
 from anki_connect import AnkiConnect, AddNoteAction
 
@@ -40,6 +40,8 @@ def add(target):
         entry.filter(target)
         entry.log()
         card = MWAnkiCard(entry)
+        p = vlc.MediaPlayer(card.audio_url)
+        p.play()
         try:
             params = AddNoteAction.format_params(
                 front=card.front,
