@@ -12,7 +12,7 @@ class MWAnkiCard:
         # example and audio url as they might be the most common.
         example = next((headword.example for headword in entry.headwords if headword.example), None)
         if example:
-            self.__back += f"<br>{example}"
+            self.__back += f"<br><br>{example}"
         self.__audio, self.__audio_url = next(
             ((headword.audio, headword.audio_url) for headword in entry.headwords if headword.audio_url),
             (None, None))
@@ -28,6 +28,8 @@ class MWAnkiCard:
     @property
     def audio_url(self):
         return self.__audio_url
+    def add_example_sentence(self, sentence):
+        self.__back += f"<br><br>{sentence}"
 
 def add(target):
     data = MerriamWebsterConnect.fetch_entry(target)
@@ -42,6 +44,9 @@ def add(target):
         card = MWAnkiCard(entry)
         p = vlc.MediaPlayer(card.audio_url)
         p.play()
+        example_sentence = input("Enter an example sentence: ").strip()
+        if example_sentence:
+            card.add_example_sentence(example_sentence)
         try:
             params = AddNoteAction.format_params(
                 front=card.front,
