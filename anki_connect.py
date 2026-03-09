@@ -1,6 +1,11 @@
 import json
 import urllib.request
 
+class AudioFile:
+    def __init__(self, url, filename):
+        self.url = url
+        self.filename = filename
+
 class AnkiConnect:
     @staticmethod
     def make_payload(action, **params):
@@ -23,7 +28,7 @@ class AnkiConnect:
 
 class AddNoteAction:
     @staticmethod
-    def format_params(front, back, audio_url, audio_filename):
+    def format_params(front, back, audio_file: AudioFile = None):
         """
         Formats the parameters for the 'addNote' action.
         """
@@ -46,10 +51,10 @@ class AddNoteAction:
                 },
             }
         }
-        if audio_url and audio_filename:
+        if audio_file:
             ret["note"]["audio"] = [{
-                "url": audio_url,
-                "filename": audio_filename,
+                "url": audio_file.url,
+                "filename": audio_file.filename,
                 "skipHash": "",
                 "fields": ["Front"]
             }]

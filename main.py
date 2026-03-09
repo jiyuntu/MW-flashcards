@@ -1,7 +1,7 @@
 import sys
 import vlc
 from dict_connect import MerriamWebsterConnect, Entry
-from anki_connect import AnkiConnect, AddNoteAction
+from anki_connect import AnkiConnect, AddNoteAction, AudioFile
 
 class MWAnkiCard:
     def __init__(self, entry: Entry):
@@ -42,8 +42,9 @@ def add(target):
         entry.filter(target)
         entry.log()
         card = MWAnkiCard(entry)
-        p = vlc.MediaPlayer(card.audio_url)
-        p.play()
+        if card.audio_url:
+            p = vlc.MediaPlayer(card.audio_url)
+            p.play()
         example_sentence = input("Enter an example sentence: ").strip()
         if example_sentence:
             card.add_example_sentence(example_sentence)
@@ -51,8 +52,7 @@ def add(target):
             params = AddNoteAction.format_params(
                 front=card.front,
                 back=card.back,
-                audio_url=card.audio_url,
-                audio_filename=f"{card.audio}.mp3"
+                audio_file=AudioFile(card.audio_url, f"{card.audio}.mp3") if card.audio_url else None
             )
             note_id = AnkiConnect.invoke('addNote', **params)
             print(f"✅ Added to Anki (ID: {note_id})")
