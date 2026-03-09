@@ -6,6 +6,11 @@ class AudioFile:
         self.url = url
         self.filename = filename
 
+class PictureFile:
+    def __init__(self, path, filename):
+        self.path = path
+        self.filename = filename
+
 class AnkiConnect:
     @staticmethod
     def make_payload(action, **params):
@@ -28,7 +33,7 @@ class AnkiConnect:
 
 class AddNoteAction:
     @staticmethod
-    def format_params(front, back, audio_file: AudioFile = None):
+    def format_params(front, back, audio_file: AudioFile = None, picture_file: PictureFile = None):
         """
         Formats the parameters for the 'addNote' action.
         """
@@ -55,8 +60,13 @@ class AddNoteAction:
             ret["note"]["audio"] = [{
                 "url": audio_file.url,
                 "filename": audio_file.filename,
-                "skipHash": "",
                 "fields": ["Front"]
+            }]
+        if picture_file:
+            ret["note"]["picture"] = [{
+                "path": picture_file.path,
+                "filename": picture_file.filename,
+                "fields": ["Back"]
             }]
         return ret
 
