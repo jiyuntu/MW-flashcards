@@ -13,3 +13,5 @@ python main.py
 ```
 
 Right after the cards are added, you will be able to view them from Anki Desktop. To view it from Anki App, sync it to Anki Desktop.
+
+Use `python main.py --help` to view params.
