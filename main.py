@@ -1,5 +1,6 @@
 import os
 import sys
+import argparse
 import vlc
 from dict_connect import MerriamWebsterConnect, Entry
 from anki_connect import AnkiConnect, AddNoteAction, AudioFile, PictureFile
@@ -49,7 +50,7 @@ class MWAnkiCard:
         self.__picture = picture
         self.__picture_path = os.path.abspath(f"data/{picture}")
 
-def add(target):
+def add(target, deck):
     data = MerriamWebsterConnect.fetch_entry(target)
     if not data:
         print(f"No results found for '{target}'.")
@@ -74,7 +75,8 @@ def add(target):
                 front=card.front,
                 back=card.back,
                 audio_file=AudioFile(url=card.audio_url, filename=f"{card.audio}.mp3") if card.audio_url else None,
-                picture_file=PictureFile(path=card.picture_path, filename=card.picture) if card.picture else None
+                picture_file=PictureFile(path=card.picture_path, filename=card.picture) if card.picture else None,
+                deck=deck
             )
             note_id = AnkiConnect.invoke('addNote', **params)
             print(f"✅ Added to Anki (ID: {note_id})")
@@ -89,15 +91,18 @@ def add(target):
                 add(headword.word)
                 return
 
-def main():
+def main(args: argparse.Namespace):
     try:
         while True:
             target = input("Enter word to look up: ").strip()
             if not target:
                 continue
-            add(target)
+            add(target, args.deck)
     except KeyboardInterrupt:
         sys.exit(0)
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Look up words on Merriam-Webster and add them to Anki.")
+    parser.add_argument("--deck", default="Merriam Webster", help="Anki deck name to add notes to")
+    args = parser.parse_args()
+    main(args)

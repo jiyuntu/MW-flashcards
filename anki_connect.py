@@ -33,13 +33,20 @@ class AnkiConnect:
 
 class AddNoteAction:
     @staticmethod
-    def format_params(front, back, audio_file: AudioFile = None, picture_file: PictureFile = None):
+    def format_params(front, back, audio_file: AudioFile = None, picture_file: PictureFile = None, deck: str = "Merriam Webster"):
         """
         Formats the parameters for the 'addNote' action.
+
+        Args:
+            front: Front of the card.
+            back: Back of the card.
+            audio_file: Optional AudioFile to attach.
+            picture_file: Optional PictureFile to attach.
+            deck: Deck name to add the card to.
         """
         ret = {
             "note": {
-                "deckName": "Merriam Webster",
+                "deckName": deck,
                 "modelName": "Basic",
                 "fields": {
                     "Front": front,
@@ -49,7 +56,7 @@ class AddNoteAction:
                     "allowDuplicate": False,
                     "duplicateScope": "deck",
                     "duplicateScopeOptions": {
-                        "deckName": "Merriam Webster",
+                        "deckName": deck,
                         "checkChildren": False,
                         "checkAllModels": False
                     }
